@@ -344,7 +344,7 @@ endif
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 			TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 			TARGET_DEVICE="$(TARGET_DEVICE)" \
-			SUPERIOR_DEVICE="$(TARGET_DEVICE)" \
+			ANCIENT_DEVICE="$(TARGET_DEVICE)" \
 			PRODUCT_NAME="$(TARGET_PRODUCT)" \
 			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
 			PRODUCT_DEFAULT_LOCALE="$(call get-default-product-locale,$(PRODUCT_LOCALES))" \
@@ -1441,8 +1441,8 @@ $(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR) $(extra_keys)
 RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
 
 define build-recoveryramdisk
-  $(hide) ./vendor/superior/tools/changelog.sh
-  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/SuperiorOS-$(SUPERIOR_MOD_VERSION)-$(TARGET_DEVICE)-$(SUPERIOR_BUILD_TYPE)-$(CUSTOM_BUILD_DATE)-Changelog.txt
+  $(hide) ./vendor/ancient/tools/changelog.sh
+  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/ancient-rom-$(ANCIENT_MOD_VERSION)-$(TARGET_DEVICE)-$(ANCIENT_BUILD_TYPE)-$(CUSTOM_BUILD_DATE)-Changelog.txt
   @echo ----- Making recovery image ------
   $(hide) mkdir -p $(TARGET_RECOVERY_OUT)
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
@@ -1686,8 +1686,8 @@ endif
 
 # $(1): output file
 define build-systemimage-target
-  $(hide) ./vendor/superior/tools/changelog.sh
-  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/SuperiorOS-$(SUPERIOR_MOD_VERSION)-$(SUPERIOR_BUILD_TYPE)-Changelog.txt
+  $(hide) ./vendor/ancient/tools/changelog.sh
+  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/ancient-rom-$(ANCIENT_MOD_VERSION)-$(ANCIENT_BUILD_TYPE)-Changelog.txt
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
@@ -3211,28 +3211,13 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-TARGET_PACKAGE := $(PRODUCT_OUT)/SuperiorOS-$(SUPERIOR_MOD_VERSION)-$(TARGET_DEVICE)-$(SUPERIOR_BUILD_TYPE)-$(CUSTOM_BUILD_DATE).zip
+TARGET_PACKAGE := $(PRODUCT_OUT)/ancient-rom-$(ANCIENT_MOD_VERSION)-$(TARGET_DEVICE)-$(ANCIENT_BUILD_TYPE)-$(CUSTOM_BUILD_DATE).zip
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(TARGET_PACKAGE) > $(TARGET_PACKAGE).md5sum
-	echo -e ""
-	echo -e ${CL_RED}"███████╗██╗   ██╗██████╗ ███████╗██████╗ ██╗ ██████╗ ██████╗      ██████╗ ███████╗ "${CL_RED}
-	echo -e ${CL_RED}"██╔════╝██║   ██║██╔══██╗██╔════╝██╔══██╗██║██╔═══██╗██╔══██╗    ██╔═══██╗██╔════╝ "${CL_RED}
-	echo -e ${CL_RED}"███████╗██║   ██║██████╔╝█████╗  ██████╔╝██║██║   ██║██████╔╝    ██║   ██║███████╗ "${CL_RED}
-	echo -e ${CL_RED}"╚════██║██║   ██║██╔═══╝ ██╔══╝  ██╔══██╗██║██║   ██║██╔══██╗    ██║   ██║╚════██║ "${CL_RED}
-	echo -e ${CL_RED}"███████║╚██████╔╝██║     ███████╗██║  ██║██║╚██████╔╝██║  ██║    ╚██████╔╝███████║ "${CL_RED}
-	echo -e ${CL_RED}"╚══════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝     ╚═════╝ ╚══════╝ "${CL_RED}
-	echo -e ""
-	echo -e ${CL_BLD}${CL_RED}"===============================-Package complete-==============================="${CL_RED}
-	echo -e ${CL_BLD}${CL_GRN}"Zip: "${CL_RED} $(TARGET_PACKAGE)${CL_RST}
-	echo -e ${CL_BLD}${CL_GRN}"MD5: "${CL_RED}" `cat $(TARGET_PACKAGE).md5sum | awk '{print $$1}' `"${CL_RST}
-	echo -e ${CL_BLD}${CL_GRN}"Size:"${CL_RED}" `du -sh $(TARGET_PACKAGE) | awk '{print $$1}' `"${CL_RST}
-	echo -e ${CL_BLD}${CL_GRN}"TimeStamp:"${CL_RED}" `cat $(PRODUCT_OUT)/system/build.prop | grep ro.build.date.utc | cut -d'=' -f2 | awk '{print $$1}' `"${CL_RST}
-	echo -e ${CL_BLD}${CL_GRN}"Integer Value:"${CL_RED}" `wc -c $(TARGET_PACKAGE) | awk '{print $$1}' `"${CL_RST}
-	echo -e ${CL_BLD}${CL_RED}"================================================================================"${CL_RED}
 endif    # build_ota_package
 
 # -----------------------------------------------------------------

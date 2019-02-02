@@ -29,7 +29,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 
 EOF
 
-    __print_superior_functions_help
+    __print_ancient_functions_help
 
 cat <<EOF
 
@@ -43,7 +43,7 @@ EOF
     local T=$(gettop)
     local A=""
     local i
-    for i in `cat $T/build/envsetup.sh $T/vendor/superior/build/envsetup.sh | sed -n "/^[[:blank:]]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
+    for i in `cat $T/build/envsetup.sh $T/vendor/ancient/build/envsetup.sh | sed -n "/^[[:blank:]]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
       A="$A $i"
     done
     echo $A
@@ -54,8 +54,8 @@ function build_build_var_cache()
 {
     local T=$(gettop)
     # Grep out the variable names from the script.
-    cached_vars=`cat $T/build/envsetup.sh $T/vendor/superior/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
-    cached_abs_vars=`cat $T/build/envsetup.sh $T/vendor/superior/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
+    cached_vars=`cat $T/build/envsetup.sh $T/vendor/ancient/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
+    cached_abs_vars=`cat $T/build/envsetup.sh $T/vendor/ancient/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
     build_dicts_script=`\builtin cd $T; build/soong/soong_ui.bash --dumpvars-mode \
                         --vars="$cached_vars" \
@@ -137,8 +137,8 @@ function check_product()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    if (echo -n $1 | grep -q -e "^superior_") ; then
-        CUSTOM_BUILD=$(echo -n $1 | sed -e 's/^superior_//g')
+    if (echo -n $1 | grep -q -e "^ancient_") ; then
+        CUSTOM_BUILD=$(echo -n $1 | sed -e 's/^ancient_//g')
         export BUILD_NUMBER=$( (date +%s%N ; echo $CUSTOM_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     else
         CUSTOM_BUILD=
@@ -561,20 +561,6 @@ function print_lunch_menu()
 {
     local uname=$(uname)
 
-    echo ""
-    tput setaf 1;
-    tput bold;
-    echo "  ██████  █    ██  ██▓███  ▓█████  ██▀███   ██▓ ▒█████   ██▀███      ▒█████    ██████ "
-    echo "▒██    ▒  ██  ▓██▒▓██░  ██▒▓█   ▀ ▓██ ▒ ██▒▓██▒▒██▒  ██▒▓██ ▒ ██▒   ▒██▒  ██▒▒██    ▒ "
-    echo "░ ▓██▄   ▓██  ▒██░▓██░ ██▓▒▒███   ▓██ ░▄█ ▒▒██▒▒██░  ██▒▓██ ░▄█ ▒   ▒██░  ██▒░ ▓██▄   "
-    echo "  ▒   ██▒▓▓█  ░██░▒██▄█▓▒ ▒▒▓█  ▄ ▒██▀▀█▄  ░██░▒██   ██░▒██▀▀█▄     ▒██   ██░  ▒   ██▒"
-    echo "▒██████▒▒▒▒█████▓ ▒██▒ ░  ░░▒████▒░██▓ ▒██▒░██░░ ████▓▒░░██▓ ▒██▒   ░ ████▓▒░▒██████▒▒"
-    echo "▒ ▒▓▒ ▒ ░░▒▓▒ ▒ ▒ ▒▓▒░ ░  ░░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ░ ▒░▒░▒░ ░ ▒▓ ░▒▓░   ░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░"
-    echo "░ ░▒  ░ ░░░▒░ ░ ░ ░▒ ░      ░ ░  ░  ░▒ ░ ▒░ ▒ ░  ░ ▒ ▒░   ░▒ ░ ▒░     ░ ▒ ▒░ ░ ░▒  ░ ░"
-    echo "░  ░  ░   ░░░ ░ ░ ░░          ░     ░░   ░  ▒ ░░ ░ ░ ▒    ░░   ░    ░ ░ ░ ▒  ░  ░  ░  "
-    echo "      ░     ░                 ░  ░   ░      ░      ░ ░     ░            ░ ░           "
-    tput sgr0;
-    echo ""
     echo "                      Welcome to the device menu                      "
     echo ""
     tput bold;
@@ -587,7 +573,7 @@ function print_lunch_menu()
        echo "  (ohai, Ibish!)"
     fi
     echo
-    if [ "z${SUPERIOR_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${ANCIENT_DEVICES_ONLY}" != "z" ]; then
        echo "Breakfast menu... pick a combo:"
     else
        echo "Lunch menu... pick a combo:"
@@ -601,7 +587,7 @@ function print_lunch_menu()
         i=$(($i+1))
     done | column
 
-    if [ "z${SUPERIOR_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${ANCIENT_DEVICES_ONLY}" != "z" ]; then
        echo " "
        echo "... and don't forget the bacon!"
     fi
@@ -625,10 +611,10 @@ function breakfast()
 {
     target=$1
     local variant=$2
-    SUPERIOR_DEVICES_ONLY="true"
+    ANCIENT_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/superior/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/ancient/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -647,7 +633,7 @@ function breakfast()
             if [ -z "$variant" ]; then
                 variant="userdebug"
             fi
-            lunch superior_$target-userdebug
+            lunch ancient_$target-userdebug
         fi
     fi
     return $?
@@ -666,7 +652,7 @@ function lunch()
         print_lunch_menu
         tput setaf 2;
         tput bold;
-        echo -n "Go ahead and pick a number or enter lunch combo(superior_device-userdebug)... "
+        echo -n "Go ahead and pick a number or enter lunch combo(ancient_device-userdebug)... "
         tput sgr0;
         read answer
     fi
@@ -1786,4 +1772,4 @@ addcompletions
 
 export ANDROID_BUILD_TOP=$(gettop)
 
-. $ANDROID_BUILD_TOP/vendor/superior/build/envsetup.sh
+. $ANDROID_BUILD_TOP/vendor/ancient/build/envsetup.sh

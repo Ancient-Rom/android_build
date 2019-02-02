@@ -231,7 +231,7 @@ $(call project-set-path-variant,recovery,RECOVERY_VARIANT,bootable/recovery)
 
 -include vendor/extra/BoardConfigExtra.mk
 ifneq ($(CUSTOM_BUILD),)
-include vendor/superior/config/BoardConfigSuperior.mk
+include vendor/ancient/config/BoardConfigAncient.mk
 endif
 
 # The build system exposes several variables for where to find the kernel
@@ -1152,7 +1152,7 @@ endif
 ifneq ($(CUSTOM_BUILD),)
 ## We need to be sure the global selinux policies are included
 ## last, to avoid accidental resetting by device configs
-$(eval include device/superior/sepolicy/common/sepolicy.mk)
+$(eval include device/ancient/sepolicy/common/sepolicy.mk)
 
 # Include any vendor specific config.mk file
 -include $(TOPDIR)vendor/*/build/core/config.mk
@@ -1166,10 +1166,10 @@ SELINUX_IGNORE_NEVERALLOWS := true
 endif
 
 # Rules for QCOM targets
--include $(TOPDIR)vendor/superior/build/core/qcom_target.mk
+-include $(TOPDIR)vendor/ancient/build/core/qcom_target.mk
 
 # Rules for MTK targets
--include $(TOPDIR)vendor/superior/build/core/mtk_target.mk
+-include $(TOPDIR)vendor/ancient/build/core/mtk_target.mk
 endif
 
 include $(BUILD_SYSTEM)/dumpvar.mk
